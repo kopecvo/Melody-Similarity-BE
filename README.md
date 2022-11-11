@@ -2,7 +2,7 @@
 Python backend for VMM semestral work
 
 ## Requirements
-Python >=3.8, venv, pip
+Python >=3.11, venv, pip
 
 ## Project setup
 
