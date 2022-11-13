@@ -1,7 +1,7 @@
 # VMM backend
 Python backend for VMM semestral work
 
-## Requirements
+### Requirements
 Python >=3.11, venv, pip
 
 ## Project setup
@@ -24,8 +24,21 @@ Install packages with `pip`
 pip install -r requirements.txt
 ```
 
-## Run dev server
+## Run server
+From `/backend` directory:
 
 ```sh
-python3 backend/manage.py runserver
+python manage.py runserver
 ```
+
+## Extracting melodies
+1) Add MIDI file to `/backend/midi`
+2) Access shell
+    ```shell
+    python manage.py shell
+    ```
+3) 
+    ```python
+    from melody_extractor.extractor import get_highest_melody
+    get_highest_melody("midi/{file}", [{tracks to merge}], 10)
+    ```
