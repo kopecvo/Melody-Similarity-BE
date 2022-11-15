@@ -39,6 +39,7 @@ python manage.py shell
 from api.melody_utils.generator import generate_all_piano_midi_de
 generate_all_piano_midi_de()
 ```
+(or use a Django Jupyter notebook)
 
 ## Run server
 From `/backend` directory:
