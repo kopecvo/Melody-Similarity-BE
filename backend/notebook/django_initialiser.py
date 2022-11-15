@@ -14,6 +14,7 @@ sys.path.insert(0, BASE_DIR)
 
 # The DJANGO_SETTINGS_MODULE has to be set to allow us to access django imports
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
+# Allow async operations
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
 # This is for setting up django
