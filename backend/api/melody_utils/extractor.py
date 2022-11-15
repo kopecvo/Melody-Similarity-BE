@@ -28,8 +28,7 @@ class ActiveNotes:
         """
         Return highest note and ticks when it started/stopped
 
-        Keyword arguments:
-        delta_tick -- time since latest MIDI Message
+        :param delta_tick: time (in ticks) since latest MIDI Message
         """
         previous_tick = self.cur_tick
         self.cur_tick = self.cur_tick + delta_tick
@@ -61,16 +60,16 @@ def get_highest_melody(file, tracks_to_merge, tick_ignore):
     highest_melodies = []
     merged_melody = []
 
-    # Process all tracks separately first
+    # Process all tracks separately first - get each track's highest melody
     for track_no in tracks_to_merge:
         an = ActiveNotes()
         highest_melody = []
         additive_tick = 0
         for msg in mid.tracks[track_no]:
             if msg.type == 'note_on':
-                # Not instant; some time has passed => evaluate previous highest note
                 tick = msg.time + additive_tick
                 additive_tick = 0
+                # Not instant; some time has passed => evaluate previous highest note
                 if tick != 0:
                     res = an.get_highest_note(tick)
                     # Filter out cases when nothing is playing
@@ -85,12 +84,10 @@ def get_highest_melody(file, tracks_to_merge, tick_ignore):
                 else:
                     an.note_off(msg.note)
 
-            # Some messages just change time for no FUCKING REASON
+            # Some messages change tick ('set_tempo', 'control_change', 'time_signature', ...)
+            # The tick from these accumulates and will be added to the next 'note_on' message
             else:
                 additive_tick = additive_tick + msg.time
-
-            # if msg.type in ['set_tempo', 'control_change', 'time_signature']:
-            #    additive_tick = additive_tick + msg.time
 
         highest_melodies.append(highest_melody)
 
