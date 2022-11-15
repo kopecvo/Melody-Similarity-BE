@@ -24,21 +24,25 @@ Install packages with `pip`
 pip install -r requirements.txt
 ```
 
+Execute db migrations
+
+From `/backend` directory:
+```sh
+python manage.py migrate
+```
+
+Generate melodies to database (piano-midi.de)
+```sh
+python manage.py shell
+```
+```python
+from api.melody_utils.generator import generate_all_piano_midi_de
+generate_all_piano_midi_de()
+```
+
 ## Run server
 From `/backend` directory:
 
 ```sh
 python manage.py runserver
 ```
-
-## Extracting melodies
-1) Add MIDI file to `/backend/midi`
-2) Access shell
-    ```shell
-    python manage.py shell
-    ```
-3) 
-    ```python
-    from melody_extractor.extractor import get_highest_melody
-    get_highest_melody("midi/{file}", [{tracks to merge}], 10)
-    ```
