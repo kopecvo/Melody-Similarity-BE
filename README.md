@@ -1,5 +1,5 @@
-# VMM backend
-Python backend for VMM semestral work
+# MIDI melody similarity backend
+Django backend for VMM semestral work
 
 ### Requirements
 Python >=3.11, venv, pip
