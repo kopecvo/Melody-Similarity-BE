@@ -9,9 +9,9 @@ def get_metadata_piano_midi_de(file):
     mid = MidiFile(file)
     track_name = ""
     author = ""
-    # First track contains data
+    # First track contains track information
     for msg in mid.tracks[0]:
-        # Not instant; some time has passed => evaluate previous highest note
+        # Join all 'track_name' messages
         if msg.type == "track_name":
             if track_name == "":
                 track_name = msg.name
