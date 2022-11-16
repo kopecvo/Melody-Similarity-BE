@@ -5,7 +5,7 @@ import os
 import sys
 
 # Find the project base directory
-BASE_DIR = os.path.dirname("..")
+BASE_DIR = os.path.dirname("../whatever")
 
 # Add the project base directory to the sys.path
 # This means the script will look in the base directory for any module imports

@@ -26,7 +26,6 @@ pip install -r requirements.txt
 
 Execute db migrations
 
-From `/backend` directory:
 ```sh
 python manage.py migrate
 ```
@@ -42,15 +41,13 @@ generate_all_piano_midi_de()
 (or use a Django Jupyter notebook)
 
 ## Run server
-From `/backend` directory:
-
 ```sh
 python manage.py runserver
 ```
 
 ## Django integrated Jupyter notebooks
 
-* Must be run from Django root directory (preferably `backend/notebook`), otherwise Django won't work
+* Must be run from Django root directory (preferably `/notebook`), otherwise Django won't work
 * Use Django Shell-Plus kernel
   * `python manage.py shell_plus --notebook` to start the kernel
 * `import django_initiliaser` to setup the notebook
