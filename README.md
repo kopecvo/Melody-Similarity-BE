@@ -2,14 +2,14 @@
 Django backend for VMM semestral work
 
 ### Requirements
-Python >=3.11, venv, pip
+Python 3, venv, pip
 
 ## Project setup
 
 Create a new virtual environment using `venv`
 
 ```sh
-python3 -m venv venv
+python -m venv venv
 ```
 
 Activate the new virtual environment
