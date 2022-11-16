@@ -5,7 +5,9 @@ import os
 
 
 def get_metadata_piano_midi_de(file):
-    # Load a midi file
+    """
+    Get metadata from a MIDI file from piano-midi.de
+    """
     mid = MidiFile(file)
     track_name = ""
     author = ""
@@ -35,7 +37,7 @@ def get_metadata_piano_midi_de(file):
 
 def generate_all_piano_midi_de(relative_dir="midi/piano_midi_de"):
     """
-    Generate melodies for all MIDI songs from www.piano-midi.de
+    Generate melodies for all MIDI songs from piano-midi.de
     """
     directory = os.fsencode(relative_dir)
 

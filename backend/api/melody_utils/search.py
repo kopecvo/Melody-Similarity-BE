@@ -5,7 +5,10 @@ import numpy as np
 
 def longest_substring(a, b):
     """
-    Return length of longest substrings
+    Return length of longest substring
+
+    :param a: list
+    :param b: list
     """
 
     m = len(a)
@@ -30,6 +33,12 @@ def longest_substring(a, b):
 
 
 def lookup(query):
+    """
+    Search for similar melody in all songs in db
+
+    :param query: list of notes of query melody
+    """
+
     t = time.process_time()
     # Retrieve all songs from db
     songs = Song.objects.all()
