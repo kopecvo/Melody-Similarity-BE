@@ -33,11 +33,10 @@ def get_metadata_piano_midi_de(file):
     }
 
 
-def generate_all_piano_midi_de():
+def generate_all_piano_midi_de(relative_dir="midi/piano_midi_de"):
     """
     Generate melodies for all MIDI songs from www.piano-midi.de
     """
-    relative_dir = "midi/piano_midi_de"
     directory = os.fsencode(relative_dir)
 
     for subdir, dirs, files in os.walk(directory):
