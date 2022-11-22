@@ -12,11 +12,11 @@ class QueryView(APIView):
     parser_classes = [JSONParser]
 
     def post(self, request, format=None):
-        if 'input_melody' not in request.data:
+        if 'inputMelody' not in request.data:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            input_melody = request.data['input_melody']
+            input_melody = request.data['inputMelody']
         except AttributeError as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
