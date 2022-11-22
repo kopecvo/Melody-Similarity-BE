@@ -7,7 +7,7 @@ from api.forms import UploadFileForm
 import os
 
 
-class QueryView(APIView):
+class SearchView(APIView):
     """
     A view that matches input melody with musical pieces in database
     """
@@ -25,8 +25,9 @@ class QueryView(APIView):
         res = lookup(input_melody)
         return Response(
             {
-                'best result title': res[0][1].title,
-                'longest subsequence': res[0][0]
+                'bestResultTitle': res[0][1].title,
+                'author': res[0][1].author,
+                'longestSubsequence': res[0][0]
             }
         )
 
