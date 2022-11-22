@@ -1,5 +1,5 @@
 from django import forms
 
 
-class QueryForm(forms.Form):
-    query_sequence = forms.CharField()
+class UploadFileForm(forms.Form):
+    file = forms.FileField()
