@@ -6,6 +6,7 @@ from .melody_utils.search import lookup
 from .melody_utils.extractor import get_highest_melody
 from api.forms import UploadFileForm
 import os
+import uuid
 
 
 uploadLocation = './upload/'
@@ -43,7 +44,9 @@ class ExtractMelodyFromMidiView(APIView):
     def post(self, request, format=None):
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            filename = uploadLocation + request.FILES['file'].name
+            # Make a safe filename
+            filename = uploadLocation + str(uuid.uuid4())
+            print(filename)
             # Make upload folder if it doesn't exist
             os.makedirs(os.path.dirname(filename), exist_ok=True)
 
