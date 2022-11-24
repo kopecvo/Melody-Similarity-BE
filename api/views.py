@@ -35,10 +35,10 @@ class SearchMelodyView(APIView):
         )
 
 
-class UploadMIDIView(APIView):
+class ExtractMelodyFromMidiView(APIView):
     """
-    To upload custom MIDI files. Returns name of file if upload was successful, so it can be used
-    to send another Query request specifying the filename
+    Upload a Midi file and try to extract melody from it. Return extracted melody
+    All midi tracks are used
     """
     def post(self, request, format=None):
         form = UploadFileForm(request.POST, request.FILES)
@@ -47,60 +47,30 @@ class UploadMIDIView(APIView):
             # Make upload folder if it doesn't exist
             os.makedirs(os.path.dirname(filename), exist_ok=True)
 
-            # Write file
+            # Save file temporarily so extraction functions can access it
             with open(filename, 'wb+') as destination:
                 for chunk in request.FILES['file'].chunks():
                     destination.write(chunk)
+
+            # Try to extract melody. Merge all tracks
+            extracted_melody = get_highest_melody(filename, [0], 5, True)
+
+            if len(extracted_melody) > 40:
+                os.remove(filename)
+                return Response({
+                    'error': 'Melody in Midi is too long (> 40). Upload a shorter Midi'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            if len(extracted_melody) < 4:
+                os.remove(filename)
+                return Response({
+                    'error': 'Melody in Midi is too short (< 4). Upload a longer Midi',
+                    'melodyLength': len(extracted_melody)
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            os.remove(filename)
             return Response({
-                'filename': request.FILES['file'].name
+                'melody': extracted_melody
             })
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-class SearchMidiView(APIView):
-    """
-    A view that searches currently uploaded midi file
-    """
-    parser_classes = [JSONParser]
-
-    def post(self, request, format=None):
-        if 'requestedMidi' not in request.data:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            filename = uploadLocation + request.data['requestedMidi']
-            with open(filename, "r") as f:
-                pass
-        except OSError:
-            os.remove(filename)
-            return Response({
-                'error': 'Requested file could not be opened'
-            }, status=status.HTTP_400_BAD_REQUEST)
-
-        f.close()
-        # Try to extract first track
-        extracted_melody = get_highest_melody(filename, [0], 5, True)
-
-        if len(extracted_melody) > 40:
-            os.remove(filename)
-            return Response({
-                'error': 'Melody in Midi is too long (> 40). Upload a shorter Midi'
-            }, status=status.HTTP_400_BAD_REQUEST)
-
-        if len(extracted_melody) < 4:
-            os.remove(filename)
-            return Response({
-                'error': 'Melody in Midi is too short (< 4). Upload a longer Midi',
-                'melodyLength': len(extracted_melody)
-            }, status=status.HTTP_400_BAD_REQUEST)
-
-        res = lookup(extracted_melody)
-        os.remove(filename)
-        return Response(
-            {
-                'bestResultTitle': res[0][1].title,
-                'author': res[0][1].author,
-                'longestSubsequence': res[0][0]
-            }
-        )
