@@ -46,7 +46,6 @@ class ExtractMelodyFromMidiView(APIView):
         if form.is_valid():
             # Make a safe filename
             filename = uploadLocation + str(uuid.uuid4())
-            print(filename)
             # Make upload folder if it doesn't exist
             os.makedirs(os.path.dirname(filename), exist_ok=True)
 
@@ -61,15 +60,16 @@ class ExtractMelodyFromMidiView(APIView):
             if len(extracted_melody) > 40:
                 os.remove(filename)
                 return Response({
-                    'error': 'Melody in Midi is too long (> 40). Upload a shorter Midi'
-                }, status=status.HTTP_400_BAD_REQUEST)
+                    'error': 'Melody in Midi is too long (> 40). Extracted first 40 notes',
+                    'melody': extracted_melody[0:40]
+                })
 
-            if len(extracted_melody) < 4:
+            if len(extracted_melody) == 0:
                 os.remove(filename)
                 return Response({
-                    'error': 'Melody in Midi is too short (< 4). Upload a longer Midi',
-                    'melodyLength': len(extracted_melody)
-                }, status=status.HTTP_400_BAD_REQUEST)
+                    'error': 'Extracted 0 notes. Midi file is empty',
+                    'melody': extracted_melody
+                })
 
             os.remove(filename)
             return Response({
