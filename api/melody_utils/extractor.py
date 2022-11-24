@@ -47,7 +47,7 @@ class ActiveNotes:
         return TimedNote(-1, previous_tick, self.cur_tick)
 
 
-def get_highest_melody(file, tracks_to_merge, tick_ignore):
+def get_highest_melody(file, tracks_to_merge, tick_ignore, merge_all = False):
     """
     Get the highest melody from a MIDI file.
 
@@ -60,13 +60,20 @@ def get_highest_melody(file, tracks_to_merge, tick_ignore):
     highest_melodies = []
     merged_melody = []
 
+    if merge_all:
+        tracks_to_merge = []
+        i = 0
+        for trck in mid.tracks:
+            tracks_to_merge.append(i)
+            i = i + 1
+
     # Process all tracks separately first - get each track's highest melody
     for track_no in tracks_to_merge:
         an = ActiveNotes()
         highest_melody = []
         additive_tick = 0
         for msg in mid.tracks[track_no]:
-            if msg.type == 'note_on':
+            if msg.type in ['note_on', 'note_off']:
                 tick = msg.time + additive_tick
                 additive_tick = 0
                 # Not instant; some time has passed => evaluate previous highest note
@@ -79,7 +86,7 @@ def get_highest_melody(file, tracks_to_merge, tick_ignore):
                         highest_melody.append(CustomMessage(res.start_tick, res.note, 1))
                         highest_melody.append(CustomMessage(res.end_tick, res.note, 0))
 
-                if msg.velocity != 0:
+                if msg.velocity != 0 and msg.type == 'note_on':
                     an.note_on(msg.note)
                 else:
                     an.note_off(msg.note)
@@ -99,6 +106,11 @@ def get_highest_melody(file, tracks_to_merge, tick_ignore):
     # Sort all messages by starting tick
     mega_list.sort(key=lambda custom_msg: custom_msg.start_tick)
     an = ActiveNotes()
+
+    # Check if mega list is empty (given tracks are empty or track numbers were wrongly supplied)
+    if len(mega_list) == 0:
+        return []
+
     cur_tick = mega_list[0][0]
 
     for custom_msg in mega_list:
