@@ -2,7 +2,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from .melody_utils.search import lookup
+from .melody_utils.search import search
 from .melody_utils.extractor import get_highest_melody
 from api.forms import UploadFileForm
 import os
@@ -26,7 +26,10 @@ class SearchMelodyView(APIView):
         except AttributeError as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        res = lookup(input_melody)
+        res = search(input_melody)
+        # q = QueueSearchTest(input_melody)
+        # res = q.segmented_lookup()
+
         return Response(
             {
                 'bestResultTitle': res[0][1].title,

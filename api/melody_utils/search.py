@@ -1,57 +1,66 @@
 from ..models import Song
 import time
 import numpy as np
+import math
 
 
-def longest_substring(a, b):
-    """
-    Return length of longest substring
+def longest_common_subsequence(segment, query):
+    m = len(segment)
+    n = len(query)
 
-    :param a: list
-    :param b: list
-    """
+    # Declaring the table for storing the dp values
+    a = np.zeros(shape=[m + 1, n + 1], dtype='int')
 
-    m = len(a)
-    n = len(b)
-
-    arr = np.zeros(shape=[m + 1, n + 1], dtype='int')
-    longest = 0
-
+    # LCS DP
     for i in range(m + 1):
         for j in range(n + 1):
             if i == 0 or j == 0:
-                arr[i][j] = 0
+                a[i][j] = 0
 
-            elif a[i - 1] == b[j - 1]:
-                arr[i][j] = arr[i - 1][j - 1] + 1
-                longest = max(longest, arr[i][j])
+            elif segment[i-1] == query[j-1]:
+                a[i][j] = a[i-1][j-1] + 1
 
             else:
-                arr[i][j] = 0
+                a[i][j] = max(a[i-1][j], a[i][j-1])
 
-    return longest
+    return a[m][n]
 
 
-def lookup(query):
-    """
-    Search for similar melody in all songs in db
-
-    :param query: list of notes of query melody
-    """
-
+# Break songs into segments of same length as query
+def search(query):
     t = time.process_time()
     # Retrieve all songs from db
     songs = Song.objects.all()
 
     results = []
+    query_len = len(query)
 
     for song in songs:
         song_notes = list(map(int, song.note_sequence.split(',')))
-        res = longest_substring(song_notes, query)
-        results.append((res, song))
+        
+        song_len = len(song_notes)
+        max_res = 0
+        max_first_index = 0
+        max_last_index = 0
 
-    # Sort in descending order by the longest subsequence length
+        # Split song into segments of length of query
+        for i in range(math.ceil(song_len / query_len)):
+            first_note_index = i * query_len
+            last_note_index = (i + 1) * query_len   # (first one excluded)
+
+            # Last note index can be out of range but array slicing is safe against that
+            # Get segment with highest LCS
+            res = longest_common_subsequence(song_notes[first_note_index:last_note_index], query)
+            if res > max_res:
+                max_res = res
+                max_first_index = first_note_index
+                max_last_index = last_note_index
+
+        results.append((max_res, song, [max_first_index, max_last_index]))
+
+    # Sort in descending order by LCS
     results.sort(key=lambda tup: tup[0], reverse=True)
     t = time.process_time() - t
     print(f'Done in {t} seconds')
     return results
+
