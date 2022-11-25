@@ -26,8 +26,9 @@ def longest_common_subsequence(segment, query):
     return a[m][n]
 
 
-# Break songs into segments of same length as query
 def search(query):
+    """For a query melody, try to match it to songs in db using metrics"""
+
     t = time.process_time()
     # Retrieve all songs from db
     songs = Song.objects.all()

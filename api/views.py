@@ -11,6 +11,7 @@ import uuid
 
 uploadLocation = './upload/'
 
+
 class SearchMelodyView(APIView):
     """
     A view that matches input melody with musical pieces in database
@@ -27,14 +28,19 @@ class SearchMelodyView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         res = search(input_melody)
-        # q = QueueSearchTest(input_melody)
-        # res = q.segmented_lookup()
+
+        results = []
+        for i in range(3):
+            results.append({
+                'title': res[i][1].title,
+                'author': res[i][1].author,
+                'longestSubsequence': res[i][0],
+                'segment': res[i][2]
+            })
 
         return Response(
             {
-                'bestResultTitle': res[0][1].title,
-                'author': res[0][1].author,
-                'longestSubsequence': res[0][0]
+                'results': results
             }
         )
 
