@@ -2,7 +2,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from .melody_utils.search import search
+from .melody_utils.search import search_lcs, lcs_get_string
 from .melody_utils.extractor import get_highest_melody
 from api.forms import UploadFileForm
 import os
@@ -27,16 +27,18 @@ class SearchMelodyView(APIView):
         except AttributeError as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        res = search(input_melody)
-
         results = []
-        for i in range(3):
-            results.append({
-                'title': res[i][1].title,
-                'author': res[i][1].author,
-                'longestSubsequence': res[i][0],
-                'segment': res[i][2]
-            })
+        if request.data['searchFn'] == "lcs":
+            res = search_lcs(input_melody)
+            for i in range(request.data['numOfResults']):
+                results.append({
+                    'title': res[i]['song'].title,
+                    'author': res[i]['song'].author,
+                    'lcs': res[i]['lcs'],
+                    'segment': res[i]['segment'],
+                    'segmentMelody': res[i]['segment_melody'],
+                    'truthArray': res[i]['truth_array']
+                })
 
         return Response(
             {
