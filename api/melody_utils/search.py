@@ -262,5 +262,6 @@ def generate_dtw_graphs(query, sorted_dtw_results, num_of_returned_results):
             dtw_graph.graph = File(f, name=path.name)
             dtw_graph.save()
 
-    # Delete temporary graphs folder
+    # Delete temporary graphs folder. Images are now saved in the media folder specified in Django settings
+    # and can be served
     shutil.rmtree(temporary_graphs_folder)
