@@ -228,9 +228,11 @@ def generate_dtw_graph(query, dtw_result, result_index):
         color = 'limegreen'
         plt.plot([x1, x2], [y1, y2], color=color, linestyle='-', linewidth=1)
 
-    plt.plot(query, label='Search', linewidth=2)
-    plt.plot(segment, label='Song', linewidth=2, color='orange')
+    plt.plot(query, label='Query', linewidth=2, color='orange')
+    plt.plot(segment, label='Song', linewidth=2)
     plt.locator_params(axis="both", integer=True, tight=True)
+    plt.ylabel("Pitch")
+    plt.xlabel("Time")
     plt.legend()
 
     # Get path to save image
