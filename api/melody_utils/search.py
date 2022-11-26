@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 
 def lcs_get_string(segment, query):
-    """Get an array of matches between the two sequences at the given index"""
+    """Traverse LCS table and get LCS string"""
     m = len(segment)
     n = len(query)
 
@@ -57,7 +57,7 @@ def lcs_get_string(segment, query):
 
 
 def lcs(segment, query):
-    """Standard DP LCS implementation."""
+    """Standard DP LCS implementation"""
     m = len(segment)
     n = len(query)
 
@@ -102,16 +102,17 @@ def search_lcs(query):
         for i in range(math.ceil(song_len / query_len)):
             first_note_index = i * query_len
             last_note_index = (i + 1) * query_len   # (first one excluded)
-            segment_melody = song_notes[first_note_index:last_note_index]
+
+            segment = song_notes[first_note_index:last_note_index]
 
             # Last note index can be out of range but array slicing is safe against that
             # Get segment with highest LCS
-            res = lcs(segment_melody, query)
+            res = lcs(segment, query)
             if res > max_len:
                 max_len = res
                 max_first_index = first_note_index
                 max_last_index = last_note_index
-                max_segment_melody = segment_melody
+                max_segment_melody = segment
 
         # Get LCS truth array for frontend
         truth_array = []
@@ -138,8 +139,10 @@ def search_lcs(query):
             'truth_array': truth_array
         })
 
+
     # Sort in descending order by LCS length
-    results.sort(key=lambda tup: tup['lcs_length'], reverse=True)
+    results.sort(key=lambda res: res['lcs_length'], reverse=True)
+    print(results[0]['lcs_length'])
     t = time.process_time() - t
     print(f'Done in {t} seconds')
     return results
@@ -163,6 +166,7 @@ def search_dtw(query):
         min_first_index = 0
         min_last_index = 0
         min_path = []
+        min_segment_melody = []
 
         # Get segments
         for i in range(math.ceil(song_len / query_len)):
@@ -178,11 +182,18 @@ def search_dtw(query):
                 min_first_index = first_note_index
                 min_last_index = last_note_index
                 min_path = path
+                min_segment_melody = segment
 
-        results.append((min_distance, song, [min_first_index, min_last_index], min_path))
+        results.append({
+            'distance': min_distance,
+            'song': song,
+            'segment': [min_first_index, min_last_index - 1],
+            'segment_melody': min_segment_melody,
+            'dtw_path': min_path
+        })
 
-    # Sort in descending order by the longest subsequence length
-    results.sort(key=lambda tup: tup[0])
+    # Sort in ascending order by the smallest DTW distance
+    results.sort(key=lambda res: res['distance'])
     t = time.process_time() - t
     print(f'Done in {t} seconds')
     return results
