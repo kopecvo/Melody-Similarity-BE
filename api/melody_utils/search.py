@@ -1,10 +1,17 @@
-from ..models import Song
 import time
 import numpy as np
 import math
+import os
+import shutil
+import uuid
 from fastdtw import fastdtw
 import matplotlib.pyplot as plt
+from matplotlib import style
+from pathlib import Path
+from django.core.files import File
+from api.models import DTWResultGraph, Song
 
+temporary_graphs_folder = 'upload/graphs/'
 
 def lcs_get_string(segment, query):
     """Traverse LCS table and get LCS string"""
@@ -142,13 +149,12 @@ def search_lcs(query):
 
     # Sort in descending order by LCS length
     results.sort(key=lambda res: res['lcs_length'], reverse=True)
-    print(results[0]['lcs_length'])
     t = time.process_time() - t
-    print(f'Done in {t} seconds')
+    print(f'LCS done in {t} seconds.')
     return results
 
 
-def search_dtw(query):
+def search_dtw(query, num_of_results):
     """For a query melody, try to match it to songs in db using DTW"""
 
     t = time.process_time()
@@ -194,6 +200,67 @@ def search_dtw(query):
 
     # Sort in ascending order by the smallest DTW distance
     results.sort(key=lambda res: res['distance'])
+
+    generate_dtw_graphs(query, results, num_of_results)
+
     t = time.process_time() - t
-    print(f'Done in {t} seconds')
+    print(f'DTW done in {t} seconds.')
     return results
+
+
+def generate_dtw_graph(query, dtw_result, result_index):
+    """
+    Generate a dtw graph using pyplot. Return path where image is saved
+    """
+    segment = dtw_result['segment_melody']
+    segment_len = len(segment)
+
+    plt.style.use('Solarize_Light2')
+
+    # print(f'----{result_index}-----')
+    # print(dtw_result['dtw_path'])
+
+    for mapping in dtw_result['dtw_path']:
+        x1 = mapping[0]
+        y1 = segment[mapping[0]]
+        x2 = mapping[1]
+        y2 = query[mapping[1]]
+        color = 'limegreen'
+        plt.plot([x1, x2], [y1, y2], color=color, linestyle='-', linewidth=1)
+
+    plt.plot(query, label='Search', linewidth=2)
+    plt.plot(segment, label='Song', linewidth=2, color='orange')
+    plt.locator_params(axis="both", integer=True, tight=True)
+    plt.legend()
+
+    # Get path to save image
+    save_path = f'{temporary_graphs_folder}{str(uuid.uuid4())}.png'
+
+    # Make upload folder if it doesn't exist
+    os.makedirs(os.path.dirname(save_path), exist_ok=True)
+    # Save image to path
+    plt.savefig(save_path)
+    # Clear plot
+    plt.clf()
+
+    return save_path
+
+
+def generate_dtw_graphs(query, sorted_dtw_results, num_of_returned_results):
+    # Delete stored files of previous results
+    for old_graph in DTWResultGraph.objects.all():
+        old_graph.graph.delete()
+
+    # Delete old graph entries (this doesn't delete the file so we have to do it manually above)
+    DTWResultGraph.objects.all().delete()
+
+    for i in range(num_of_returned_results):
+        dtw_graph = DTWResultGraph(result_index=i)
+        dtw_graph_path = generate_dtw_graph(query, sorted_dtw_results[i], i)
+        path = Path(dtw_graph_path)
+        with path.open(mode='rb') as f:
+            dtw_graph.graph = File(f, name=path.name)
+            dtw_graph.save()
+
+    # Delete temporary graphs folder
+    shutil.rmtree(temporary_graphs_folder)

@@ -5,6 +5,7 @@ from rest_framework import status
 from .melody_utils.search import search_lcs, search_dtw
 from .melody_utils.extractor import get_highest_melody
 from api.forms import UploadFileForm
+from api.models import DTWResultGraph
 import os
 import uuid
 
@@ -43,7 +44,7 @@ class SearchMelodyView(APIView):
 
         # Search with DTW
         elif request.data['searchFn'] == "dtw":
-            res = search_dtw(input_melody)
+            res = search_dtw(input_melody, request.data['numOfResults'])
             for i in range(request.data['numOfResults']):
                 results.append({
                     'title': res[i]['song'].title,
@@ -51,6 +52,7 @@ class SearchMelodyView(APIView):
                     'dtwDistance': res[i]['distance'],
                     'segment': res[i]['segment'],
                     'segmentMelody': res[i]['segment_melody'],
+                    'graphUrl': DTWResultGraph.objects.filter(result_index=i)[0].graph.url
                 })
 
         return Response(
