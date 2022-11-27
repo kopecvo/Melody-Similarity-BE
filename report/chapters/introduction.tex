@@ -1,8 +1,21 @@
 \section{Úvod}
-Tato zpráva slouží jako dokumentace semestrálního projektu pro předmět NI--VMM na téma Podobnost melodií (MIDI).
-
-Zadáním projektu byla tvorba webové aplikace pro vyhledávání hudebních skladeb ve formátu MIDI na základě podobnosti melodií. Vstupem hledání je soubor ve formátu MIDI, který se následně porovná s extrahovanými melodiemi v databázi a pomocí různých metrik aplikace vyhledá podobné výsledky.
+Tato zpráva slouží jako dokumentace semestrálního projektu pro předmět NI--VMM. Zadáním projektu byla tvorba webové aplikace pro vyhledávání hudebních skladeb ve formátu MIDI na základě podobnosti melodií.
 
 V této zprávě nejdříve blíže popíši vlastnosti projektu. Dále prozkoumám způsoby extrakce melodií a jejich porovnávání. V implementační části se zaměřím na zvolení vhodných technologií, práci s MIDI soubory (tím pádem také stručně popíši standard MIDI) a proces tvorby jak backendové, tak frontendové části aplikace. Předvedu příklady výstupů hotové aplikace a provedu základní měření rychlosti vyhledávání. Na závěr zhodnotím dosažené výsledky a navrhnu možná vylepšení aplikace.
 
+\pagebreak
 \section{Popis projektu}
+Zaměřil jsem se na klasické klavírní skladby -- díky tomu, že se ve skladbě hraje jenom na jeden nástroj, je určení hlavní melodie značně jednodušší. Kromě toho jsou MIDI soubory pro klasickou hudbu na internetu velmi dostupné.
+
+Vstupem vyhledávání je kratší soubor ve formátu MIDI (cca 4--40 po sobě jdoucích not), který obsahuje nějakou melodii. Aplikace se následně tuto melodii pokusí najít ve všech skladbách v databázi. Výstupem je seznam skladeb, které obsahují melodii nejvíce se podobající vstupní melodii. Tento seznam je setříděn od nejlepších (nejvíce podobných) výsledků po nejhorší.
+
+Databáze obsahuje 295 klasických skladeb volně dostupných ze stránky \url{http://www.piano-midi.de/}.
+
+Implementace projektu spočívala v několika krocích:
+\begin{itemize}
+    \item Extrakce melodie z MIDI souborů a datová reprezentace melodie v databázi
+    \item Porovnávání dvou melodií (určení jejich podobnosti)
+    \item Vyhledávání nejpodobnější melodie v celé databázi
+    \item Uživatelské rozhraní přizpůsobené pro práci s hudbou (např. umožňuje přehrávání, vizualizaci melodií\ldots)
+\end{itemize}
+
