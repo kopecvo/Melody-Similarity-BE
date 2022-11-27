@@ -1,3 +1,15 @@
 \section{Implementace}
 
-My system worked as follows \ldots
+\subsection{Volba technologií a struktura projektu}
+Aplikaci jsem rozdělil na backend a frontend. Backend bude zajišťovat veškerou \uv{vědeckou} práci, tedy extrakci melodie, správu databáze skladeb a samotné vyhledávání podobnosti. Backend tyto služby poskytne frontendu pomocí REST API. Na frontendu bude poté implementováno uživatelské rozhraní pro vyhledávání.
+
+Pro backend se přirozeně nabízel jazyk Python, který disponuje mnoha knihovnami pro vědeckou práci, zároveň se dalo jednoduše experimentovat pomocí Jupyter notebooku, než všechno implementovat na ostro. Nejdříve jsem se však snažil najít Python knihovnu pro práci s MIDI soubory, abych extrakci nemusel implementovat ve frontendu (zde se nabízela Javascriptová knihovna \textit{Tone.js}, která je schopna MIDI soubory konvertovat na JSON). Pro Python jsem našel knihovnu \textit{Mido}, která k MIDI souborům přistupuje více low-level způsobem. I přes tento fakt jsem si vybral Python s tím, že knihovnu \textit{Mido} vyzkouším. Jako web framework jsem zvolil \textit{Django}, který se postará o samotné API a jakoukoliv práci s databází.
+
+Pro frontend jsem zvolil Javascriptový framework \textit{Vue 3} s grafickou knihovnou \textit{Vuetify}.
+
+\subsection{Extrakce melodie}
+
+\begin{minted}[bgcolor=LightGray]{python}
+from mido import MidiFile
+    print("ass")
+\end{minted}

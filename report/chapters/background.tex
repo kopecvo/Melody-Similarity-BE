@@ -1,8 +1,25 @@
 \section{Způsoby řešení}
 
 \subsection{Hledání hlavní melodie ve skladbě}
-Než se podíváme na samotný standard souborů MIDI, je vhodné prozkoumat způsoby určení hlavní melodie v hudební skladbě.
 
 \subsubsection*{Sekvence výšek}
+Za hlavní melodii považujeme sekvenci tónů, které jsou v daný čas skladby nejvyšší (tzv. výšky). Výhodou je jak lehká implementace extrakce, tak dostatečná přesnost -- nejvyšší tóny většinou představují hlavní melodii, zvlášť v klavírních skladbách. Jsou však případy, kdy se hlavní melodie skrývá v basech (nejnižších tónech) a výšky jsou pouze komplementární. 
+
+\subsubsection*{Sekvence nejhlasitějších tónů}
+Dále můžeme za hlavní melodii považovat sekvenci tónů, které jsou v daný čas skladby nejhlasitější. Pro toto hledání nám už ale nestačí pouze notový zápis, ale nejlépe nějaký audio soubor -- např. MP3, ve kterém bychom mohli analyzovat spektogram, nebo již zmíněný formát MIDI, ve kterém je hlasitost určitého tónu určena proměnnou \lstinline{velocity}. Lze však usoudit, že i touto metodou bychom nedosáhli vysoce přesných výsledků -- např. již kvůli tomu, že některé tóny mohou mít ve stejnou dobu stejnou hlasitost -- poté bychom se museli dále rozhodovat podle výšky tónu či jiných vlastností.
+
+Problémem je také fakt, že objektivně určit hlavní melodii nelze -- záleží na subjektivní interpretaci dané skladby, což také vyžaduje určitou hudební znalost. I samotný uživatel, který melodii bude vyhledávat, si hlavní melodii může vyložit jinak, než je obecně známo. U výše zmíněných metod proto nelze jednoduše ověřit, jak moc úspěšné jsou. Budeme tedy pracovat s domněnkou, že úspěšnost obou metod je dostatečná pro potřeby naší aplikace.
 
 \subsection{Podobnostní algoritmy}
+V obou metodách zmíněných v předchozí kapitole byly melodie reprezentovány sekvencí. To nám značně zjednodušuje situaci, jelikož vyhledávání podobných skladeb bude spočívat v porovnávání dvou sekvencí. Na tento problém existuje mnoho algoritmů, které jsou výpočetně rychlé a také jednoduché na implementaci.
+
+\subsubsection*{Longest common subsequence (LCS)}
+LCS je problém nálezu nejdelší společné podposloupnosti dvou sekvencí. Příbuzným problémem je \textit{Longest common substring} -- neboli nález nejdelšího společného podslova. Slovo se od posloupnosti liší tím, že v obou sekvencích nesmí být přerušeno, zatímco společná posloupnost může přeskakovat prvky.
+
+Při hledání podobných melodií je LCS užitečná -- jedná se o jeden ze základních způsobů, jak určit podobnost sekvencí. LCS je navíc odolná proti malým změnám v melodii (např. jedna nota vložená navíc, či chybějící nota).
+
+\subsubsection*{Dynamic time warping (DTW)}
+DTW je problém měření podobnosti dvou sekvencí, které se mohou lišit v rychlosti. Na první pohled tato metrika nemusí být pro hledání podobných melodií příliš užitečná, jelikož v extrahované melodii neuvádíme délku jednotlivých not, nýbrž pouze jejich tón. I přes to však DTW představuje sofistikovanější přístup k podobnosti melodií, než LCS, jelikož pracuje s odchylkou jednotlivých členů sekvencí a nezabývá se pouze jejich rovností -- DTW tak může objevit podobnost dvou melodií, kde druhá melodie představuje první melodii posunutou např. o jeden půltón výše.
+
+Jelikož mi jak LCS, tak DTW připadaly jako užitečné algoritmy k hledání podobnosti melodií, implementoval jsem je oba v mé aplikaci. Aplikace tedy bude sloužit také jako ukázka, v jakých případech si který algoritmus vede lépe. Efektivní algoritmy LCS a DTW využívají dynamického programování se složitostí $O(mn)$, kde $m$ a $n$ značí délky porovnávaných sekvencí.
+\pagebreak
