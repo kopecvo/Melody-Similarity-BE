@@ -6,6 +6,8 @@
 \usepackage[top=3cm, bottom=3cm, left = 3cm, right = 3cm]{geometry} 
 \geometry{a4paper} 
 \usepackage[utf8]{inputenc}
+
+% Czech localization
 \usepackage[english, main=czech]{babel}
 \usepackage{graphicx} 
 \usepackage{amsmath,amssymb}
@@ -14,14 +16,20 @@
 
 % Czech shite
 \usepackage{xevlna}
+% use \uv{}
 \usepackage{csquotes}
 
 \usepackage{listings}
 
+% Minted + minted configuration
 \usepackage{minted}
 \usepackage{xcolor} % to access the named colour LightGray
 \definecolor{LightGray}{gray}{0.9}
 \usemintedstyle{borland}
+
+% References
+\usepackage[style=iso-numeric]{biblatex}
+\addbibresource{ref.bib}
 
 \title{NI--VMM -- podobnost MIDI souborů}
 \author{Bc. Vojtěch Kopecký}
@@ -39,6 +47,9 @@
 \input{chapters/discussion.tex}
 \input{chapters/summary.tex}
 
-\bibliographystyle{abbrv}
-% \bibliography{references}  % need to put bibtex references in references.bib 
+% Disable overflow of links
+\pagebreak
+\setlength{\emergencystretch}{3em}
+\printbibliography
+
 \end{document}

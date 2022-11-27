@@ -8,8 +8,33 @@ Pro backend se přirozeně nabízel jazyk Python, který disponuje mnoha knihovn
 Pro frontend jsem zvolil Javascriptový framework \textit{Vue 3} s grafickou knihovnou \textit{Vuetify}.
 
 \subsection{Extrakce melodie}
+\cite{mido}\cite{midi-standard}
 
 \begin{minted}[bgcolor=LightGray]{python}
 from mido import MidiFile
-    print("ass")
+
+# Load midi file
+midi = MidiFile("../midi/piano_midi_de/bach/bach_846.mid")
+
+# Print all messages in the second track
+for message in midi.tracks[1]:
+    print(message)
+\end{minted}
+\begin{minted}[bgcolor=LightGray]{python}
+MetaMessage('midi_port', port=0, time=0)
+MetaMessage('track_name', name='Piano right', time=0)
+program_change channel=0 program=0 time=0
+control_change channel=0 control=7 value=100 time=0
+control_change channel=0 control=10 value=64 time=0
+control_change channel=0 control=91 value=127 time=0
+MetaMessage('text', text='bdca426d104a26ac9dcb070447587523', time=0)
+note_on channel=0 note=67 velocity=56 time=241
+note_on channel=0 note=67 velocity=0 time=120
+note_on channel=0 note=72 velocity=60 time=0
+note_on channel=0 note=72 velocity=0 time=120
+note_on channel=0 note=76 velocity=63 time=0
+note_on channel=0 note=76 velocity=0 time=108
+...
+note_on channel=0 note=72 velocity=0 time=0
+MetaMessage('end_of_track', time=0)
 \end{minted}
