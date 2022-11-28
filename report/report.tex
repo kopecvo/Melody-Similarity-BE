@@ -9,17 +9,17 @@
 
 % Czech localization
 \usepackage[english, main=czech]{babel}
+
 \usepackage{graphicx} 
 \usepackage{amsmath,amssymb}
+\usepackage{listings}
+% Make urls pasted in text not exceed borders
 \PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
-%\hypersetup{linkcolor=black,citecolor=black,filecolor=black,urlcolor=black} % black links, for printed output
 
 % Czech shite
 \usepackage{xevlna}
 % use \uv{}
 \usepackage{csquotes}
-
-\usepackage{listings}
 
 % Minted + minted configuration
 \usepackage{minted}
@@ -28,6 +28,7 @@
 \usemintedstyle{borland}
 
 % References
+% \usepackage[style=iso-numeric]{biblatex} for ISO czech format
 \usepackage[style=iso-numeric]{biblatex}
 \addbibresource{ref.bib}
 
@@ -36,6 +37,7 @@
 %\date{}
 
 \begin{document}
+
 \maketitle
 \tableofcontents
 

@@ -3,7 +3,7 @@
 \subsection{Hledání hlavní melodie ve skladbě}
 
 \subsubsection*{Sekvence výšek}
-Za hlavní melodii považujeme sekvenci tónů, které jsou v daný čas skladby nejvyšší (tzv. výšky). Výhodou je jak lehká implementace extrakce, tak dostatečná přesnost -- nejvyšší tóny většinou představují hlavní melodii, zvlášť v klavírních skladbách. Jsou však případy, kdy se hlavní melodie skrývá v basech (nejnižších tónech) a výšky jsou pouze komplementární. 
+Za hlavní melodii můžeme považovat sekvenci tónů, které jsou v daný čas skladby nejvyšší (tzv. výšky). Výhodou je jak lehká implementace extrakce, tak dostatečná přesnost -- nejvyšší tóny většinou představují hlavní melodii, zvlášť v klavírních skladbách. Jsou však případy, kdy se hlavní melodie skrývá v basech (nejnižších tónech) a výšky jsou pouze komplementární. 
 
 \subsubsection*{Sekvence nejhlasitějších tónů}
 Dále můžeme za hlavní melodii považovat sekvenci tónů, které jsou v daný čas skladby nejhlasitější. Pro toto hledání nám už ale nestačí pouze notový zápis, ale nejlépe nějaký audio soubor -- např. MP3, ve kterém bychom mohli analyzovat spektogram, nebo již zmíněný formát MIDI, ve kterém je hlasitost určitého tónu určena proměnnou \lstinline{velocity}. Lze však usoudit, že i touto metodou bychom nedosáhli vysoce přesných výsledků -- např. již kvůli tomu, že některé tóny mohou mít ve stejnou dobu stejnou hlasitost -- poté bychom se museli dále rozhodovat podle výšky tónu či jiných vlastností.
@@ -22,4 +22,3 @@ Při hledání podobných melodií je LCS užitečná -- jedná se o jeden ze z�
 DTW je problém měření podobnosti dvou sekvencí, které se mohou lišit v rychlosti. Na první pohled tato metrika nemusí být pro hledání podobných melodií příliš užitečná, jelikož v extrahované melodii neuvádíme délku jednotlivých not, nýbrž pouze jejich tón. I přes to však DTW představuje sofistikovanější přístup k podobnosti melodií, než LCS, jelikož pracuje s odchylkou jednotlivých členů sekvencí a nezabývá se pouze jejich rovností -- DTW tak může objevit podobnost dvou melodií, kde druhá melodie představuje první melodii posunutou např. o jeden půltón výše.
 
 Jelikož mi jak LCS, tak DTW připadaly jako užitečné algoritmy k hledání podobnosti melodií, implementoval jsem je oba v mé aplikaci. Aplikace tedy bude sloužit také jako ukázka, v jakých případech si který algoritmus vede lépe. Efektivní algoritmy LCS a DTW využívají dynamického programování se složitostí $O(mn)$, kde $m$ a $n$ značí délky porovnávaných sekvencí.
-\pagebreak

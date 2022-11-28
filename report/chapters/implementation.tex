@@ -8,9 +8,11 @@ Pro backend se přirozeně nabízel jazyk Python, který disponuje mnoha knihovn
 Pro frontend jsem zvolil Javascriptový framework \textit{Vue 3} s grafickou knihovnou \textit{Vuetify}.
 
 \subsection{Extrakce melodie}
-\cite{mido}\cite{midi-standard}
+Nejdříve bylo potřeba extrahovat melodii z MIDI souborů. MIDI soubory se mohou skládat z několika stop (tracks). Každá stopa se pak skládá z tzv. zpráv (messages). Existují různé druhy zpráv s různými parametry (standard je dobře popsaný např. na stránce \cite{midi-standard})
+S knihovnou \textit{Mido} \cite{mido} můžeme MIDI soubor jednoduše načíst a vypsat všechny zprávy z nějaké stopy: 
 
-\begin{minted}[bgcolor=LightGray]{python}
+\begin{figure}[!ht]
+    \begin{minted}[bgcolor=LightGray]{python}
 from mido import MidiFile
 
 # Load midi file
@@ -19,8 +21,11 @@ midi = MidiFile("../midi/piano_midi_de/bach/bach_846.mid")
 # Print all messages in the second track
 for message in midi.tracks[1]:
     print(message)
-\end{minted}
-\begin{minted}[bgcolor=LightGray]{python}
+    \end{minted}
+\end{figure}
+
+\begin{figure}[!ht]
+    \begin{minted}[bgcolor=LightGray]{python}
 MetaMessage('midi_port', port=0, time=0)
 MetaMessage('track_name', name='Piano right', time=0)
 program_change channel=0 program=0 time=0
@@ -37,4 +42,18 @@ note_on channel=0 note=76 velocity=0 time=108
 ...
 note_on channel=0 note=72 velocity=0 time=0
 MetaMessage('end_of_track', time=0)
-\end{minted}
+    \end{minted}
+\end{figure}
+
+Na výstupu kódu lze vidět, že některé zprávy nastavují parametry skladby (\lstinline{MetaMessage}, \lstinline{program_change}, \lstinline{control_change}) a některé zprávy určují noty, které se mají přehrávat (\lstinline{note_on}).
+
+Každá zpráva má dále atribut \lstinline{time}, který určuje odchylku této zprávy od předchozí v tickích. Pokud má zpráva hodnotu \lstinline{time} nastavenou na 0, zpráva se spustí ve stejnou dobu, jako ta předchozí. Seznam zpráv je tedy vypsán sekvenčně s tím, že každá zpráva nenese absolutní časovou hodnotu, ale pouze odchylku od té předchozí zprávy.
+
+Ve zprávě \lstinline{note_on} se výška noty určuje atributem \lstinline{note}. Na stránkách standardu MIDI \cite{midi-standard} lze nalézt tabulku pro zjištění, kterou notu dané číslo reprezentuje. Atribut \lstinline{velocity} určuje hlasitost dané noty.
+
+Ve výpisu si můžete všimnout, že nota se na nějakou dobu zapne nastavením \lstinline{velocity} na nějakou kladnou hodnotu, a posléze se nota vypne opět zprávou \lstinline{note_on} s \lstinline{velocity} nastavenou na 0. Tento fakt je matoucí, jelikož existuje i zpráva \lstinline{note_off}, kterou se noty také dají vypínat. Existují tedy dva různé způsoby vypínání not, na což je potřeba brát ohled při zpracovávání MIDI souborů z různých zdrojů. Častěji se na vypínání not používá \lstinline{note_on}, avšak jsem zjistil, že např. program pro tvorbu hudby \textit{FL Studio} používá \lstinline{note_off}.
+
+Dalším problémem, se kterým jsem se při extrakci potýkal, byl ten, že každá zpráva (i \lstinline{MetaMessages}, které nemají mít s melodií nic společného) mohou mít nastavenou časovou odchylku \lstinline{time} na větší než 0. Při extrakci více stop najednou pak nastaly problémy, jelikož jsem hodnotu \lstinline{time} kontroloval pouze u zpráv \lstinline{note_on}.
+
+Práce s touto knihovnou tedy byla zapeklitější, avšak mi umožnila lépe poznat formát MIDI zevnitř a dala mi větší kontrolu při extrakci melodie. Na samotnou extrakci jsem použil metodu výšek.
+
