@@ -2,8 +2,8 @@ from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from .melody_utils.search import search_lcs, search_dtw
-from .melody_utils.extractor import get_highest_melody
+from api.melody_utils.search import search_lcs, search_dtw
+from api.melody_utils.extractor import get_highest_melody
 from api.forms import UploadFileForm
 from api.models import DTWResultGraph
 import os
