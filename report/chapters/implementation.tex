@@ -59,3 +59,10 @@ Práce s touto knihovnou tedy byla zapeklitější, avšak mi umožnila lépe po
 
 
 \subsection{Vyhledávání podobných melodií}
+V backendu jsem implementoval automatickou extrakci melodií ze všech skladeb ze stránky piano-midi.de do databáze. LCS a DTW jsem implementoval dynamickým programováním. Při vyhledávání se dotaz porovná se všemi skladbami v databázi, přičemž se každá skladba rozdělí na segmenty stejné délky, jakou má dotaz.
+
+Segmentaci skladeb jsem nejdříve zkoušel implementovat metodou \uv{sliding window} -- segmenty mají opět stejné délky, jako dotaz, akorát např. druhý segment nezačíná na konci prvního segmentu, nýbrž druhou notou celé skladby. Tímto způsobem lze najít potencionálně lepší výsledky, avšak je výpočetně složitejší, než jednoduše rozdělit skladbu na na sebe navazující segmenty -- při jednoduchém postupu je složitost porovnání dotazu ($m$) se všemi segmenty skladby ($n_1, n_2, \ldots$) $O(mn_1 + mn_2 + \ldots) = O(m(n_1 + n_2 + \ldots)) = O(mn)$, kdežto metoda sliding window má složitost $O(m^2(n - m))$. Kvůli větší složitosti jsem od této metody musel upustit, jelikož vyhledávání trvalo příliš dlouho.
+
+Každá skladba se tedy rozdělí na na sebe navazující segmenty stejné délky, jako dotaz. V každé skladbě algoritmus vyhledá segment s nejlepší hodnotou LCS/DTW. Algoritmus pak vrátí seznam skladeb seřazený podle nejpodobnějšího segmentu.
+
+\subsection{Uživatelské rozhraní}
