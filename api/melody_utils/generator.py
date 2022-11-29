@@ -1,5 +1,5 @@
-from ..models import Song
-from .extractor import get_highest_melody
+from api.models import Song
+from api.melody_utils.extractor import get_highest_melody
 from mido import MidiFile
 import os
 
