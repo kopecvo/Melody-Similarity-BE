@@ -130,3 +130,8 @@ def get_highest_melody(file, tracks_to_merge, tick_ignore, merge_all = False):
         cur_tick = custom_msg.start_tick
 
     return merged_melody
+
+
+def melody_str_to_arr(melody_arr):
+    """Convert melody string (from db) to array of notes."""
+    return list(map(int, melody_arr.split(',')))
