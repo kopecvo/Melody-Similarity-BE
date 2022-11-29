@@ -35,10 +35,14 @@ def get_metadata_piano_midi_de(file):
     }
 
 
-def generate_all_piano_midi_de(relative_dir="midi/piano_midi_de"):
+def generate_all_piano_midi_de(relative_dir="midi/piano_midi_de", clean=True):
     """
     Generate melodies for all MIDI songs from piano-midi.de
     """
+    # Delete any previous songs in db
+    if clean:
+        Song.objects.all().delete()
+
     directory = os.fsencode(relative_dir)
 
     for subdir, dirs, files in os.walk(directory):
@@ -54,3 +58,5 @@ def generate_all_piano_midi_de(relative_dir="midi/piano_midi_de"):
 
             song.save()
             print(f'Generated song {full_path}')
+
+    print(f'Done. Currently storing {len(Song.objects.all())} songs.')
