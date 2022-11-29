@@ -44,7 +44,7 @@ note_on channel=0 note=72 velocity=0 time=0
 MetaMessage('end_of_track', time=0)
     \end{minted}
 \end{figure}
-
+\pagebreak
 Na výstupu kódu lze vidět, že některé zprávy nastavují parametry skladby (\lstinline{MetaMessage}, \lstinline{program_change}, \lstinline{control_change}) a některé zprávy určují noty, které se mají přehrávat (\lstinline{note_on}).
 
 Každá zpráva má dále atribut \lstinline{time}, který určuje odchylku této zprávy od předchozí v tickích. Pokud má zpráva hodnotu \lstinline{time} nastavenou na 0, zpráva se spustí ve stejnou dobu, jako ta předchozí. Seznam zpráv je tedy vypsán sekvenčně s tím, že každá zpráva nenese absolutní časovou hodnotu, ale pouze odchylku od té předchozí zprávy.
@@ -83,3 +83,4 @@ V pravé části rozhraní se nachází panel s nastaveními vyhledávání -- z
     \caption{Všechny prvky rozhraní}
     \includegraphics[width=\textwidth]{images/interface.png}
 \end{figure}
+\pagebreak
