@@ -13,6 +13,25 @@ from api.models import DTWResultGraph, Song
 
 temporary_graphs_folder = 'upload/graphs/'
 
+
+def dtw(segment, query):
+    m, n = len(segment), len(query)
+    dtw_matrix = np.zeros((m+1, n+1))
+
+    for i in range(m+1):
+        for j in range(n+1):
+            dtw_matrix[i, j] = np.inf
+    dtw_matrix[0, 0] = 0
+
+    for i in range(1, m+1):
+        for j in range(1, n+1):
+            cost = abs(segment[i - 1] - query[j - 1])
+            dtw_matrix[i, j] = cost + np.min([dtw_matrix[i-1, j],       # deletion
+                                              dtw_matrix[i, j-1],       # insertion
+                                              dtw_matrix[i-1, j-1]])    # match
+    return dtw_matrix[m, n]
+
+
 def lcs_get_string(segment, query):
     """Traverse LCS table and get LCS string"""
     m = len(segment)
@@ -86,7 +105,7 @@ def lcs(segment, query):
     return a[m][n]
 
 
-def search_lcs(query):
+def search_lcs(query, return_time=False):
     """For a query melody, try to match it to songs in db using LCS"""
 
     t = time.process_time()
@@ -151,10 +170,12 @@ def search_lcs(query):
     results.sort(key=lambda res: res['lcs_length'], reverse=True)
     t = time.process_time() - t
     print(f'LCS done in {t} seconds.')
+    if return_time:
+        return t
     return results
 
 
-def search_dtw(query, num_of_results):
+def search_dtw(query, num_of_results, generate_graphs=True, fast=True, return_time=False):
     """For a query melody, try to match it to songs in db using DTW"""
 
     t = time.process_time()
@@ -181,8 +202,12 @@ def search_dtw(query, num_of_results):
 
             segment = song_notes[first_note_index:last_note_index]
 
-            # Last note index can be out of range but array slicing is safe against that
-            distance, path = fastdtw(segment, query)
+            if fast:
+                distance, path = fastdtw(segment, query)
+            else:
+                path = []
+                distance = dtw(segment, query)
+
             if distance < min_distance:
                 min_distance = distance
                 min_first_index = first_note_index
@@ -201,14 +226,17 @@ def search_dtw(query, num_of_results):
     # Sort in ascending order by the smallest DTW distance
     results.sort(key=lambda res: res['distance'])
 
-    generate_dtw_graphs(query, results, num_of_results)
+    if generate_graphs:
+        generate_dtw_graphs(query, results, num_of_results)
 
     t = time.process_time() - t
     print(f'DTW done in {t} seconds.')
+    if return_time:
+        return t
     return results
 
 
-def generate_dtw_graph(query, dtw_result, result_index):
+def generate_dtw_graph(query, dtw_result):
     """
     Generate a dtw graph using pyplot. Return path where image is saved
     """
@@ -248,7 +276,9 @@ def generate_dtw_graph(query, dtw_result, result_index):
     return save_path
 
 
-def generate_dtw_graphs(query, sorted_dtw_results, num_of_returned_results):
+def generate_dtw_graphs(query, sorted_dtw_results, num_of_results):
+    """Generate graphs for the first x results"""
+
     # Delete stored files of previous results
     for old_graph in DTWResultGraph.objects.all():
         old_graph.graph.delete()
@@ -256,9 +286,9 @@ def generate_dtw_graphs(query, sorted_dtw_results, num_of_returned_results):
     # Delete old graph entries (this doesn't delete the file so we have to do it manually above)
     DTWResultGraph.objects.all().delete()
 
-    for i in range(num_of_returned_results):
+    for i in range(num_of_results):
         dtw_graph = DTWResultGraph(result_index=i)
-        dtw_graph_path = generate_dtw_graph(query, sorted_dtw_results[i], i)
+        dtw_graph_path = generate_dtw_graph(query, sorted_dtw_results[i])
         path = Path(dtw_graph_path)
         with path.open(mode='rb') as f:
             dtw_graph.graph = File(f, name=path.name)

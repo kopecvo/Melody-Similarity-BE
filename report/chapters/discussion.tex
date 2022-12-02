@@ -1,1 +1,5 @@
-\section{Diskuze}
+\section{Další vývoj}
+Nejprve lze vylepšit samotný sekvencer v uživatelském rozhraní -- lze přidat mnoho ovládacích prvků, např. dosah dostupné klaviatury, aby se mohly používat vyšší/nižší klávesy. Nastavitelná by také mohla být rychlost přehrávání.
+
+Samotné vyhledávání je velice pomalé -- nejen, že běží v Pythonu, ale také nelze použít multithreadingu, což se navíc obecně nepraktikuje na web serverech -- výpočetně náročné úkony jsou většinou předány další aplikaci, napsané např. v jazyce C++, Rust\ldots{ }Zrychlení vyhledávání by tak spočívalo nejen v překopání lineárního prohledávání (namísto toho použít indexaci), ale také v přesměrování výpočetně náročného úkonu jiné službě napsané v jiném jazyce.
+\pagebreak
