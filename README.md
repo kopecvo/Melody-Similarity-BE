@@ -2,7 +2,7 @@
 Django backend for melody similarity app
 
 ### Requirements
-Python 3, venv, pip
+Python 3.11, venv, pip
 
 ## Project setup
 
