@@ -1,10 +1,14 @@
 # MIDI melody similarity backend
 Django backend for melody similarity app
+* Features described in [FE repo](https://github.com/kopecvo/Melody-Similarity-FE) of the app
+
+## Technology used
+* Python, Jupyter Notebook, Django, Django REST Framework, Pandas, PyPlot
+
+## Project setup
 
 ### Requirements
 Python 3.11, venv, pip
-
-## Project setup
 
 Create a new virtual environment using `venv`
 
